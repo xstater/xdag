@@ -1,3 +1,28 @@
+//! # XDag
+//! A simple DAG (Directed Acyclic Graph) libarary
+//! # Note
+//! This lib just provides a data-structure to store DAG with checking. 
+//! It doesn't contain any algorithm about DAG
+//! # Some Examples
+//! ```Rust
+//! // Create a new DAG
+//! let mut dag = Dag::new();
+//! // insert 3 nodes with data '()'
+//! dag.insert_node(2, ());
+//! dag.insert_node(4, ());
+//! dag.insert_node(3, ());
+//! // insert 2 edges with data '()'
+//! dag.insert_edge(2, 3, ()).unwrap();
+//! dag.insert_edge(2, 4, ()).unwrap();
+//! // Get all roots and leaves in DAG
+//! let roots = dag.roots().map(|(id, _)| id).collect::<Vec<_>>();
+//! let leaves = dag.leaves().map(|(id, _)| id).collect::<Vec<_>>();
+
+//! assert_eq!(&roots, &[2]);
+//! for id in [3, 4].iter() {
+//!     assert!(leaves.contains(id))
+//! }
+//! ```
 mod error;
 mod iter;
 #[cfg(test)]
@@ -11,6 +36,10 @@ use std::{
     hash::Hash,
 };
 
+/// The DAG
+/// # Remarks
+/// * You can store data in 'Node' or 'Edge'
+/// * `NodeId` must be `Copy + Hash + Eq` because it stored DAG by `HashMap` and `HashSet`
 #[derive(Debug, Clone)]
 pub struct Dag<NodeId, NodeData, EdgeData> {
     nodes: HashMap<NodeId, NodeData>,
@@ -22,6 +51,7 @@ impl<NodeId, NodeData, EdgeData> Dag<NodeId, NodeData, EdgeData>
 where
     NodeId: Copy + Hash + Eq,
 {
+    /// Create an empty DAG
     pub fn new() -> Self {
         Dag {
             nodes: HashMap::new(),
@@ -193,6 +223,7 @@ where
         self.nodes.iter().map(|(id, data)| (*id, data))
     }
     
+    /// Get all edges in `Dag`
     pub fn edges(&self) -> EdgesIter<'_,NodeId,EdgeData> {
         EdgesIter {
             from_iter: self.edges.iter(),
@@ -211,16 +242,24 @@ where
     }
 
     /// Get data stored with node
+    /// # Returns
+    /// Return `None` if `node_id` is not in `Dag`
     pub fn get_node(&self, node_id: NodeId) -> Option<&NodeData> {
         self.nodes.get(&node_id)
     }
 
     /// Get mutable data stored with node
+    /// # Returns
+    /// Return `None` if `node_id` is not in `Dag`
     pub fn get_node_mut(&mut self, node_id: NodeId) -> Option<&mut NodeData> {
         self.nodes.get_mut(&node_id)
     }
     
     /// Get data stored with edge
+    /// # Returns
+    /// Return `Ok(Some(data))` if success
+    /// # Errors
+    /// * `Err(NodeNotFound(id))` when `from` or `to` are NOT in `Dag`
     pub fn get_edge(&self, from: NodeId, to: NodeId) -> Result<Option<&EdgeData>,DagError<NodeId,EdgeData>> {
         if !self.nodes.contains_key(&from) {
             return Err(DagError::NodeNotFound(from));
@@ -234,6 +273,10 @@ where
     }
 
     /// Get mutable data stored with edge
+    /// # Returns
+    /// Return `Ok(Some(data))` if success
+    /// # Errors
+    /// * `Err(NodeNotFound(id))` when `from` or `to` are NOT in `Dag`
     pub fn get_edge_mut(&mut self, from: NodeId, to: NodeId) -> Result<Option<&mut EdgeData>,DagError<NodeId,EdgeData>> {
         if !self.nodes.contains_key(&from) {
             return Err(DagError::NodeNotFound(from));

@@ -1,8 +1,11 @@
 use std::{error::Error, fmt::Display};
 
+/// Errors about `DAG`
 #[derive(Debug, Clone, Copy)]
 pub enum DagError<NodeId, EdgeData> {
+    /// There is no such id in `DAG`
     NodeNotFound(NodeId),
+    /// Insert this edge will make a cycle which whill destroy the `DAG`
     HasCycle(NodeId, NodeId, EdgeData),
 }
 

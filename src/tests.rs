@@ -1,5 +1,4 @@
-use crate::dag::DagError;
-
+use crate::DagError;
 use super::Dag;
 
 #[test]
