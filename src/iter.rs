@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-/// The iterator of children in `DAG`
+/// iterator of the children in `DAG`
 pub struct ChildrenIter<'a, NodeId, EdgeData> {
     pub(super) iter: Option<std::collections::hash_map::Iter<'a, NodeId, EdgeData>>,
 }
@@ -33,7 +33,7 @@ impl<'a, NodeId, EdgeData> ExactSizeIterator for ChildrenIter<'a, NodeId, EdgeDa
 {
 }
 
-/// The iterator of parents in `DAG`
+/// iterator of the parents in `DAG`
 pub struct ParentsIter<'a, NodeId> {
     pub(super) iter: Option<std::collections::hash_set::Iter<'a, NodeId>>,
 }
@@ -63,7 +63,7 @@ where
 
 impl<'a, NodeId> ExactSizeIterator for ParentsIter<'a, NodeId> where NodeId: Copy {}
 
-/// The iterator of edges in `DAG`
+/// iterator of the edges in `DAG`
 pub struct EdgesIter<'a,NodeId,EdgeData> {
     pub(super) from_iter: std::collections::hash_map::Iter<'a,NodeId,HashMap<NodeId,EdgeData>>,
     pub(super) to_iter: Option<(NodeId,std::collections::hash_map::Iter<'a,NodeId,EdgeData>)>,
