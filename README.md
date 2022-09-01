@@ -1,11 +1,11 @@
 # XDag
-A simple DAG (Directed Acyclic Graph) libarary
+A simple DAG (Directed Acyclic Graph) library
 # Note
-This lib just provides a data-structure to store DAG with checking. 
-It doesn't contain any algorithm about DAG
+This lib just provides a data-structure to store DAG with checking.
+It doesn't contain any algorithm about DAG.
 # Docs
 [docs.rs](https://docs.rs/xdag/)
-# Some Examples
+# Examples
 ```Rust
 // Create a new DAG
 let mut dag = Dag::new();
