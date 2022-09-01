@@ -1,6 +1,6 @@
 use std::{error::Error, fmt::Display};
 
-/// Errors about `DAG`
+/// `DAG` errors
 #[derive(Debug, Clone, Copy)]
 pub enum DagError<NodeId, EdgeData> {
     /// There is no such id in `DAG`

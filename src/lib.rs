@@ -36,10 +36,10 @@ use std::{
     hash::Hash,
 };
 
-/// The DAG
+/// DAG
 /// # Remarks
 /// * You can store data in 'Node' or 'Edge'
-/// * `NodeId` must be `Copy + Hash + Eq` because it stored DAG by `HashMap` and `HashSet`
+/// * `NodeId` must be `Copy + Hash + Eq` because DAG is stored by `HashMap` and `HashSet`
 #[derive(Debug, Clone)]
 pub struct Dag<NodeId, NodeData, EdgeData> {
     nodes: HashMap<NodeId, NodeData>,
@@ -60,7 +60,7 @@ where
         }
     }
 
-    /// Check a node is in a cycle, this will destory DAG
+    /// Check if a node is in a cycle, this will destory DAG
     fn in_cycle(&self, node_id: NodeId) -> bool {
         // DFS
         let mut visited = HashSet::new();
@@ -79,7 +79,7 @@ where
         false
     }
 
-    /// Check `node_id` is contained in `Dag`
+    /// Check if a `node_id` is contained in `Dag`
     pub fn contains_node(&self, node_id: NodeId) -> bool {
         self.nodes.contains_key(&node_id)
     }
@@ -97,7 +97,7 @@ where
         self.nodes.insert(node_id, node_data)
     }
 
-    /// Check the edge is in `Dag`
+    /// Check if an `edge` is contained in `Dag`
     pub fn contains_edge(&self, from: NodeId, to: NodeId) -> bool {
         if let Some(children) = self.edges.get(&from) {
             return children.contains_key(&to);
@@ -107,10 +107,10 @@ where
 
     /// Insert an edge with data in `Dag`
     /// # Return
-    /// * Return `Ok(Some(data))` when there is an same edge in `Dag`
+    /// * Return `Ok(Some(data))` when there is a same edge in `Dag`
     /// # Errors
-    /// * `Err(NodeNotFound(id))` when `from` or `to` CANNOT be found in `Dag`
-    /// * `Err(HasCycle(from,to,data))` when detected a cycle
+    /// * `Err(NodeNotFound(id))` when `from` or `to` is NOT found in `Dag`
+    /// * `Err(HasCycle(from,to,data))` when a cycle is detected
     pub fn insert_edge(
         &mut self,
         from: NodeId,
@@ -123,20 +123,20 @@ where
         if !self.nodes.contains_key(&to) {
             return Err(DagError::NodeNotFound(to));
         }
-        let children = self.edges.get_mut(&from).unwrap_or_else(|| unreachable!());
+        let children = self.edges.get_mut(&from).unwrap_or_else(|| unreachable!("proved by contains_key"));
         let result = children.insert(to, edge_data);
         if self.in_cycle(from) {
             // roll back
             // remove that edge
-            let children = self.edges.get_mut(&from).unwrap_or_else(|| unreachable!());
-            let data = children.remove(&to).unwrap_or_else(|| unreachable!());
+            let children = self.edges.get_mut(&from).unwrap_or_else(|| unreachable!("proved by contains_key"));
+            let data = children.remove(&to).unwrap_or_else(|| unreachable!("proved by contains_key"));
             return Err(DagError::HasCycle(from, to, data));
         }
         // added back edge
         let parents = self
             .back_edges
             .get_mut(&to)
-            .unwrap_or_else(|| unreachable!());
+            .unwrap_or_else(|| unreachable!("proved by contains_key"));
         parents.insert(from);
         Ok(result)
     }
@@ -144,9 +144,9 @@ where
     /// Remove an edge from `Dag`
     /// # Returns
     /// * Return `Ok(Some(data))` when success
-    /// * Return `Ok(None)` when no such edge
+    /// * Return `Ok(None)` when there is no such edge
     /// # Errors
-    /// * `Err(NodeNotFound(id))` when `from` or `to` are NOT in `Dag`
+    /// * `Err(NodeNotFound(id))` when `from` or `to` is NOT found in `Dag`
     pub fn remove_edge(
         &mut self,
         from: NodeId,
@@ -158,17 +158,17 @@ where
         if !self.nodes.contains_key(&to) {
             return Err(DagError::NodeNotFound(to));
         }
-        let children = self.edges.get_mut(&from).unwrap_or_else(|| unreachable!());
+        let children = self.edges.get_mut(&from).unwrap_or_else(|| unreachable!("proved by contains_key"));
         let result = children.remove(&to);
         let parents = self
             .back_edges
             .get_mut(&to)
-            .unwrap_or_else(|| unreachable!());
+            .unwrap_or_else(|| unreachable!("proved by contains_key"));
         parents.remove(&from);
         Ok(result)
     }
 
-    /// remove a node and all edges
+    /// remove a node and all edges related
     /// # Returns
     /// * Return `(Some(data),edges_data)` if successed
     pub fn remove_node(&mut self, node_id: NodeId) -> (Option<NodeData>, Vec<EdgeData>) {
@@ -181,8 +181,8 @@ where
         for child_id in ids {
             let data = self
                 .remove_edge(node_id, child_id)
-                .unwrap_or_else(|_| unreachable!())
-                .unwrap_or_else(|| unreachable!());
+                .unwrap_or_else(|_| unreachable!("Xdag ensures this node exists both in nodes and edges at the same time"))
+                .unwrap_or_else(|| unreachable!("data is from self.children, so there must be such an edge"));
             edge_datas.push(data);
         }
         // remove parents edges
@@ -190,8 +190,8 @@ where
         for parent_id in ids {
             let data = self
                 .remove_edge(parent_id, node_id)
-                .unwrap_or_else(|_| unreachable!())
-                .unwrap_or_else(|| unreachable!());
+                .unwrap_or_else(|_| unreachable!("Xdag ensures this node exists both in nodes and edges at the same time"))
+                .unwrap_or_else(|| unreachable!("data is from self.parents, so there must be such an edge"));
             edge_datas.push(data)
         }
         // remove node
@@ -199,14 +199,14 @@ where
         (node_data, edge_datas)
     }
 
-    /// Get a iterator of all children node by give `node_id`
+    /// Get an iterator of all the children of given `node_id`
     pub fn children(&self, node_id: NodeId) -> ChildrenIter<'_, NodeId, EdgeData> {
         ChildrenIter {
             iter: self.edges.get(&node_id).map(|map| map.iter()),
         }
     }
 
-    /// Get a iterator of all children node by give `node_id`
+    /// Get an iterator of all the children of given `node_id`
     pub fn parents(&self, node_id: NodeId) -> ParentsIter<'_, NodeId> {
         ParentsIter {
             iter: self.back_edges.get(&node_id).map(|set| set.iter()),
@@ -218,12 +218,12 @@ where
         self.nodes.len()
     }
 
-    /// Get all nodes in `Dag`
+    /// Get all the nodes in `Dag`
     pub fn nodes(&self) -> impl Iterator<Item = (NodeId, &'_ NodeData)> {
         self.nodes.iter().map(|(id, data)| (*id, data))
     }
     
-    /// Get all edges in `Dag`
+    /// Get all the edges in `Dag`
     pub fn edges(&self) -> EdgesIter<'_,NodeId,EdgeData> {
         EdgesIter {
             from_iter: self.edges.iter(),
@@ -231,35 +231,35 @@ where
         }
     }
 
-    /// Get all leaf nodes in `Dag`
+    /// Get all the leaves in `Dag`
     pub fn leaves(&self) -> impl Iterator<Item = (NodeId, &'_ NodeData)> {
         self.nodes().filter(|(id, _)| self.children(*id).len() == 0)
     }
 
-    /// Get all root nodes in `Dag`
+    /// Get all the roots in `Dag`
     pub fn roots(&self) -> impl Iterator<Item = (NodeId, &'_ NodeData)> {
         self.nodes().filter(|(id, _)| self.parents(*id).len() == 0)
     }
 
-    /// Get data stored with node
+    /// Get data from node
     /// # Returns
-    /// Return `None` if `node_id` is not in `Dag`
+    /// Return `None` if `node_id` is not found in `Dag`
     pub fn get_node(&self, node_id: NodeId) -> Option<&NodeData> {
         self.nodes.get(&node_id)
     }
 
-    /// Get mutable data stored with node
+    /// Get mutable data from node
     /// # Returns
-    /// Return `None` if `node_id` is not in `Dag`
+    /// Return `None` if `node_id` is not found in `Dag`
     pub fn get_node_mut(&mut self, node_id: NodeId) -> Option<&mut NodeData> {
         self.nodes.get_mut(&node_id)
     }
     
-    /// Get data stored with edge
+    /// Get data from edge
     /// # Returns
     /// Return `Ok(Some(data))` if success
     /// # Errors
-    /// * `Err(NodeNotFound(id))` when `from` or `to` are NOT in `Dag`
+    /// * `Err(NodeNotFound(id))` when `from` or `to` is NOT found in `Dag`
     pub fn get_edge(&self, from: NodeId, to: NodeId) -> Result<Option<&EdgeData>,DagError<NodeId,EdgeData>> {
         if !self.nodes.contains_key(&from) {
             return Err(DagError::NodeNotFound(from));
@@ -268,15 +268,15 @@ where
             return Err(DagError::NodeNotFound(to));
         }
         let children = self.edges.get(&from)
-            .unwrap_or_else(|| unreachable!());
+            .unwrap_or_else(|| unreachable!("proved by contains_key"));
         Ok(children.get(&to))
     }
 
-    /// Get mutable data stored with edge
+    /// Get mutable data from edge
     /// # Returns
     /// Return `Ok(Some(data))` if success
     /// # Errors
-    /// * `Err(NodeNotFound(id))` when `from` or `to` are NOT in `Dag`
+    /// * `Err(NodeNotFound(id))` when `from` or `to` is NOT stored in `Dag`
     pub fn get_edge_mut(&mut self, from: NodeId, to: NodeId) -> Result<Option<&mut EdgeData>,DagError<NodeId,EdgeData>> {
         if !self.nodes.contains_key(&from) {
             return Err(DagError::NodeNotFound(from));
@@ -285,7 +285,7 @@ where
             return Err(DagError::NodeNotFound(to));
         }
         let children = self.edges.get_mut(&from)
-            .unwrap_or_else(|| unreachable!());
+            .unwrap_or_else(|| unreachable!("proved by contains_key"));
         Ok(children.get_mut(&to))
     }
 }
