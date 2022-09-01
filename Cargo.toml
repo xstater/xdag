@@ -2,6 +2,13 @@
 name = "xdag"
 version = "0.1.0"
 edition = "2021"
+license = "MIT"
+description = "A simple Rust DAG(Directed Acyclic Graph) lib"
+documentation = "https://docs.rs/xdag/"
+readme = "README.md"
+repository = "https://github.com/xstater/xdag/"
+keywords = ["DAG","data-structure","graph"]
+categories = ["data-structures"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
