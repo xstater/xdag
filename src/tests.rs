@@ -1,5 +1,5 @@
-use crate::DagError;
 use super::Dag;
+use crate::DagError;
 
 #[test]
 fn basic() {

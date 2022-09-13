@@ -31,7 +31,6 @@ impl<'a, NodeId, EdgeData> ExactSizeIterator for ChildrenIter<'a, NodeId, EdgeDa
 {
 }
 
-
 /// iterator of the children in `DAG`
 pub struct ChildrenIterMut<'a, NodeId, EdgeData> {
     pub(crate) iter: Option<std::collections::hash_map::IterMut<'a, NodeId, EdgeData>>,

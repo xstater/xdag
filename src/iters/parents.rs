@@ -1,4 +1,3 @@
-
 /// iterator of the parents in `DAG`
 pub struct ParentsIter<'a, NodeId> {
     pub(crate) iter: Option<std::collections::hash_set::Iter<'a, NodeId>>,
