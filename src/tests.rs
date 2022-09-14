@@ -72,53 +72,41 @@ fn insert_and_remove() {
     // check dag
     {
         // root
-        let mut roots = dag.roots().map(|(id, _)| id).collect::<Vec<_>>();
-        roots.sort();
+        let roots = dag.roots().map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&roots, &[1, 4]);
         // leaves
-        let mut leaves = dag.leaves().map(|(id, _)| id).collect::<Vec<_>>();
-        leaves.sort();
+        let leaves = dag.leaves().map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&leaves, &[5]);
         // all nodes
-        let mut children = dag.children(1).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(1).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[2]);
 
-        let mut children = dag.children(2).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(2).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[3]);
 
-        let mut children = dag.children(3).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(3).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[5]);
 
-        let mut children = dag.children(4).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(4).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[2, 5]);
 
-        let mut children = dag.children(5).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(5).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[]);
 
         // parents
-        let mut parents = dag.parents(1).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(1).collect::<Vec<_>>();
         assert_eq!(&parents, &[]);
 
-        let mut parents = dag.parents(2).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(2).collect::<Vec<_>>();
         assert_eq!(&parents, &[1, 4]);
 
-        let mut parents = dag.parents(3).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(3).collect::<Vec<_>>();
         assert_eq!(&parents, &[2]);
 
-        let mut parents = dag.parents(4).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(4).collect::<Vec<_>>();
         assert_eq!(&parents, &[]);
 
-        let mut parents = dag.parents(5).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(5).collect::<Vec<_>>();
         assert_eq!(&parents, &[3, 4]);
 
         // data stored in node
@@ -145,53 +133,41 @@ fn insert_and_remove() {
 
     {
         // root
-        let mut roots = dag.roots().map(|(id, _)| id).collect::<Vec<_>>();
-        roots.sort();
+        let roots = dag.roots().map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&roots, &[1, 4]);
         // leaves
-        let mut leaves = dag.leaves().map(|(id, _)| id).collect::<Vec<_>>();
-        leaves.sort();
+        let leaves = dag.leaves().map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&leaves, &[3, 5]);
         // all nodes
-        let mut children = dag.children(1).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(1).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[2]);
 
-        let mut children = dag.children(2).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(2).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[3]);
 
-        let mut children = dag.children(3).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(3).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[]);
 
-        let mut children = dag.children(4).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(4).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[2, 5]);
 
-        let mut children = dag.children(5).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(5).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[]);
 
         // parents
-        let mut parents = dag.parents(1).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(1).collect::<Vec<_>>();
         assert_eq!(&parents, &[]);
 
-        let mut parents = dag.parents(2).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(2).collect::<Vec<_>>();
         assert_eq!(&parents, &[1, 4]);
 
-        let mut parents = dag.parents(3).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(3).collect::<Vec<_>>();
         assert_eq!(&parents, &[2]);
 
-        let mut parents = dag.parents(4).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(4).collect::<Vec<_>>();
         assert_eq!(&parents, &[]);
 
-        let mut parents = dag.parents(5).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(5).collect::<Vec<_>>();
         assert_eq!(&parents, &[4]);
 
         // data stored in node
@@ -217,54 +193,42 @@ fn insert_and_remove() {
     assert_eq!(&edges_data, &['a', 'b', 'c']);
     {
         // root
-        let mut roots = dag.roots().map(|(id, _)| id).collect::<Vec<_>>();
-        roots.sort();
+        let roots = dag.roots().map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&roots, &[1, 3, 4]);
         // leaves
-        let mut leaves = dag.leaves().map(|(id, _)| id).collect::<Vec<_>>();
-        leaves.sort();
+        let leaves = dag.leaves().map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&leaves, &[1, 3, 5]);
         // all nodes
-        let mut children = dag.children(1).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(1).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[]);
 
-        let mut children = dag.children(2).map(|(id, _)| id).collect::<Vec<_>>();
+        let children = dag.children(2).map(|(id, _)| id).collect::<Vec<_>>();
         // when id desn't exist in dag, it yield None
-        children.sort();
         assert_eq!(&children, &[]);
 
-        let mut children = dag.children(3).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(3).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[]);
 
-        let mut children = dag.children(4).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(4).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[5]);
 
-        let mut children = dag.children(5).map(|(id, _)| id).collect::<Vec<_>>();
-        children.sort();
+        let children = dag.children(5).map(|(id, _)| id).collect::<Vec<_>>();
         assert_eq!(&children, &[]);
 
         // parents
-        let mut parents = dag.parents(1).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(1).collect::<Vec<_>>();
         assert_eq!(&parents, &[]);
 
-        let mut parents = dag.parents(2).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(2).collect::<Vec<_>>();
         assert_eq!(&parents, &[]);
 
-        let mut parents = dag.parents(3).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(3).collect::<Vec<_>>();
         assert_eq!(&parents, &[]);
 
-        let mut parents = dag.parents(4).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(4).collect::<Vec<_>>();
         assert_eq!(&parents, &[]);
 
-        let mut parents = dag.parents(5).collect::<Vec<_>>();
-        parents.sort();
+        let parents = dag.parents(5).collect::<Vec<_>>();
         assert_eq!(&parents, &[4]);
 
         // data stored in node
