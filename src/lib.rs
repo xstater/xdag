@@ -3,6 +3,8 @@
 //! # Note
 //! This lib just provides a data-structure to store DAG with checking.
 //! It doesn't contain any algorithm about DAG
+//! # Details
+//! XDAG stores DAG by BTreeMap. Because it can ensure the order of edges and nodes.
 //! # Some Examples
 //! ```Rust
 //! // Create a new DAG
