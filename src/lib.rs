@@ -28,13 +28,10 @@ pub mod iters;
 #[cfg(test)]
 mod tests;
 
+use std::collections::{BTreeMap, BTreeSet};
+
 pub use error::DagError;
 use iters::{ChildrenIter, ChildrenIterMut, EdgesIter, EdgesIterMut, ParentsIter};
-
-use std::{
-    collections::{HashMap, HashSet},
-    hash::Hash,
-};
 
 /// DAG
 /// # Remarks
@@ -42,28 +39,28 @@ use std::{
 /// * `NodeId` must be `Copy + Hash + Eq` because DAG is stored by `HashMap` and `HashSet`
 #[derive(Debug, Clone)]
 pub struct Dag<NodeId, NodeData, EdgeData> {
-    nodes: HashMap<NodeId, NodeData>,
-    edges: HashMap<NodeId, HashMap<NodeId, EdgeData>>,
-    back_edges: HashMap<NodeId, HashSet<NodeId>>,
+    nodes: BTreeMap<NodeId, NodeData>,
+    edges: BTreeMap<NodeId, BTreeMap<NodeId, EdgeData>>,
+    back_edges: BTreeMap<NodeId, BTreeSet<NodeId>>,
 }
 
 impl<NodeId, NodeData, EdgeData> Dag<NodeId, NodeData, EdgeData>
 where
-    NodeId: Copy + Hash + Eq,
+    NodeId: Copy + Ord
 {
     /// Create an empty DAG
     pub fn new() -> Self {
         Dag {
-            nodes: HashMap::new(),
-            edges: HashMap::new(),
-            back_edges: HashMap::new(),
+            nodes: BTreeMap::new(),
+            edges: BTreeMap::new(),
+            back_edges: BTreeMap::new(),
         }
     }
 
     /// Check if a node is in a cycle, this will destory DAG
     fn in_cycle(&self, node_id: NodeId) -> bool {
         // DFS
-        let mut visited = HashSet::new();
+        let mut visited = BTreeSet::new();
         let mut stack = vec![node_id];
 
         while let Some(top) = stack.pop() {
@@ -89,10 +86,10 @@ where
     /// * Return `Some(data)` when `node_id` is already in `Dag`
     pub fn insert_node(&mut self, node_id: NodeId, node_data: NodeData) -> Option<NodeData> {
         if !self.edges.contains_key(&node_id) {
-            self.edges.insert(node_id, HashMap::new());
+            self.edges.insert(node_id, BTreeMap::new());
         }
         if !self.back_edges.contains_key(&node_id) {
-            self.back_edges.insert(node_id, HashSet::new());
+            self.back_edges.insert(node_id, BTreeSet::new());
         }
         self.nodes.insert(node_id, node_data)
     }
