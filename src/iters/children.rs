@@ -1,6 +1,6 @@
 /// iterator of the children in `DAG`
 pub struct ChildrenIter<'a, NodeId, EdgeData> {
-    pub(crate) iter: Option<std::collections::btree_map::Iter<'a, NodeId, EdgeData>>,
+    pub(crate) iter: Option<std::collections::hash_map::Iter<'a, NodeId, EdgeData>>,
 }
 
 impl<'a, NodeId, EdgeData> Iterator for ChildrenIter<'a, NodeId, EdgeData>
@@ -33,7 +33,7 @@ impl<'a, NodeId, EdgeData> ExactSizeIterator for ChildrenIter<'a, NodeId, EdgeDa
 
 /// iterator of the children in `DAG`
 pub struct ChildrenIterMut<'a, NodeId, EdgeData> {
-    pub(crate) iter: Option<std::collections::btree_map::IterMut<'a, NodeId, EdgeData>>,
+    pub(crate) iter: Option<std::collections::hash_map::IterMut<'a, NodeId, EdgeData>>,
 }
 
 impl<'a, NodeId, EdgeData> Iterator for ChildrenIterMut<'a, NodeId, EdgeData>

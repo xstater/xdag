@@ -1,6 +1,6 @@
 /// iterator of the parents in `DAG`
 pub struct ParentsIter<'a, NodeId> {
-    pub(crate) iter: Option<std::collections::btree_set::Iter<'a, NodeId>>,
+    pub(crate) iter: Option<std::collections::hash_set::Iter<'a, NodeId>>,
 }
 
 impl<'a, NodeId> Iterator for ParentsIter<'a, NodeId>

@@ -30,7 +30,7 @@ pub mod iters;
 #[cfg(test)]
 mod tests;
 
-use std::collections::{BTreeMap, BTreeSet};
+use std::{collections::{HashMap, HashSet}, hash::Hash};
 
 pub use error::DagError;
 use iters::{ChildrenIter, ChildrenIterMut, EdgesIter, EdgesIterMut, ParentsIter};
@@ -41,28 +41,28 @@ use iters::{ChildrenIter, ChildrenIterMut, EdgesIter, EdgesIterMut, ParentsIter}
 /// * `NodeId` must be `Copy + Hash + Eq` because DAG is stored by `HashMap` and `HashSet`
 #[derive(Debug, Clone)]
 pub struct Dag<NodeId, NodeData, EdgeData> {
-    nodes: BTreeMap<NodeId, NodeData>,
-    edges: BTreeMap<NodeId, BTreeMap<NodeId, EdgeData>>,
-    back_edges: BTreeMap<NodeId, BTreeSet<NodeId>>,
+    nodes: HashMap<NodeId, NodeData>,
+    edges: HashMap<NodeId, HashMap<NodeId, EdgeData>>,
+    back_edges: HashMap<NodeId, HashSet<NodeId>>,
 }
 
 impl<NodeId, NodeData, EdgeData> Dag<NodeId, NodeData, EdgeData>
 where
-    NodeId: Copy + Ord
+    NodeId: Copy + Hash + Eq
 {
     /// Create an empty DAG
     pub fn new() -> Self {
         Dag {
-            nodes: BTreeMap::new(),
-            edges: BTreeMap::new(),
-            back_edges: BTreeMap::new(),
+            nodes: HashMap::new(),
+            edges: HashMap::new(),
+            back_edges: HashMap::new(),
         }
     }
 
-    /// Check if a node is in a cycle, this will destory DAG
+    /// Check if a node is in a cycle, this will destroy DAG
     fn in_cycle(&self, node_id: NodeId) -> bool {
         // DFS
-        let mut visited = BTreeSet::new();
+        let mut visited = HashSet::new();
         let mut stack = vec![node_id];
 
         while let Some(top) = stack.pop() {
@@ -83,15 +83,20 @@ where
         self.nodes.contains_key(&node_id)
     }
 
+    /// Check a node is root
+    pub fn is_root(&self, node_id: NodeId) -> bool {
+        self.parents(node_id).count() == 0
+    }
+
     /// Insert a node with data
     /// # Returns
     /// * Return `Some(data)` when `node_id` is already in `Dag`
     pub fn insert_node(&mut self, node_id: NodeId, node_data: NodeData) -> Option<NodeData> {
         if !self.edges.contains_key(&node_id) {
-            self.edges.insert(node_id, BTreeMap::new());
+            self.edges.insert(node_id, HashMap::new());
         }
         if !self.back_edges.contains_key(&node_id) {
-            self.back_edges.insert(node_id, BTreeSet::new());
+            self.back_edges.insert(node_id, HashSet::new());
         }
         self.nodes.insert(node_id, node_data)
     }
@@ -180,12 +185,12 @@ where
 
     /// remove a node and all edges related
     /// # Returns
-    /// * Return `(Some(data),edges_data)` if successed
+    /// * Return `(Some(data),edges_data)` if succeeded
     pub fn remove_node(&mut self, node_id: NodeId) -> (Option<NodeData>, Vec<EdgeData>) {
         if !self.contains_node(node_id) {
             return (None, Vec::new());
         }
-        let mut edge_datas = Vec::new();
+        let mut edge_data = Vec::new();
         // remove children edges
         let ids = self.children(node_id).map(|(id, _)| id).collect::<Vec<_>>();
         for child_id in ids {
@@ -199,7 +204,7 @@ where
                 .unwrap_or_else(|| {
                     unreachable!("data is from self.children, so there must be such an edge")
                 });
-            edge_datas.push(data);
+            edge_data.push(data);
         }
         // remove parents edges
         let ids = self.parents(node_id).collect::<Vec<_>>();
@@ -214,11 +219,11 @@ where
                 .unwrap_or_else(|| {
                     unreachable!("data is from self.parents, so there must be such an edge")
                 });
-            edge_datas.push(data)
+            edge_data.push(data)
         }
         // remove node
         let node_data = self.nodes.remove(&node_id);
-        (node_data, edge_datas)
+        (node_data, edge_data)
     }
 
     /// Get an iterator of all the children of given `node_id`

@@ -4,7 +4,7 @@ A simple DAG (Directed Acyclic Graph) library
 This lib just provides a data-structure to store DAG with checking.
 It doesn't contain any algorithm about DAG.
 # Details
-XDAG stores DAG by BTreeMap. Because it can ensure the order of edges and nodes.
+XDAG stores DAG by HashMap. it CANNOT ensure the order of children and edges
 # Docs
 [docs.rs](https://docs.rs/xdag/)
 # Examples

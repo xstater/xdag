@@ -1,11 +1,11 @@
-use std::collections::BTreeMap;
+use std::collections::HashMap;
 
 /// iterator of the edges in `DAG`
 pub struct EdgesIter<'a, NodeId, EdgeData> {
-    pub(crate) from_iter: std::collections::btree_map::Iter<'a, NodeId, BTreeMap<NodeId, EdgeData>>,
+    pub(crate) from_iter: std::collections::hash_map::Iter<'a, NodeId, HashMap<NodeId, EdgeData>>,
     pub(crate) to_iter: Option<(
         NodeId,
-        std::collections::btree_map::Iter<'a, NodeId, EdgeData>,
+        std::collections::hash_map::Iter<'a, NodeId, EdgeData>,
     )>,
 }
 
@@ -35,10 +35,10 @@ where
 
 pub struct EdgesIterMut<'a, NodeId, EdgeData> {
     pub(crate) from_iter:
-        std::collections::btree_map::IterMut<'a, NodeId, BTreeMap<NodeId, EdgeData>>,
+        std::collections::hash_map::IterMut<'a, NodeId, HashMap<NodeId, EdgeData>>,
     pub(crate) to_iter: Option<(
         NodeId,
-        std::collections::btree_map::IterMut<'a, NodeId, EdgeData>,
+        std::collections::hash_map::IterMut<'a, NodeId, EdgeData>,
     )>,
 }
 
